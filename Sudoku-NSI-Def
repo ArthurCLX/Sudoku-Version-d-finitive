@@ -1,0 +1,313 @@
+#Nous commençons par importer les biblioth`ques requises pour le bon fonctionnement du Sudoku.
+import pygame
+from pygame.locals import *
+
+image = pygame.image.load(r"C:\Users\apujolb\Downloads\sudoku\sudoku.PNG")
+#insérer ici l'emplacement de l'image en pièce jointe du mail.
+longueur = 850
+largeur = 660
+WindowSurface = pygame.display.set_mode((longueur,largeur))
+pygame.display.update()
+
+X=0
+Y=0
+x=1
+y=1
+WHITE = (255,255,255)
+BLACK = (0,0,0)
+RED = (255,0,0)
+GREEN = (0,255,0)
+BLUE = (0,0,255)
+GREY = (128,128,128)
+Lx=600-60
+lx=60+(80*9)-60
+cases = 500 / 9
+case=pygame.Surface((80, 60))
+pygame.draw.rect(case, WHITE, case.get_rect(), 1)
+case_rectangle_position = case.get_rect()
+L = [1, 2 ,3 , 4, 5, 6, 7, 8, 9]
+C = [1, 2 ,3 , 4, 5, 6, 7, 8, 9]
+
+
+#Nous créons la grille initiale qui permet de pré-remplir le Sudoku ainsi qu'une grille corrigée afin de la comparer à celle du joueur.
+grille_init = [
+            [5, 3,'' , '', 7, '', '', '', ''],
+            [6, '', '', 1, 9, 5, '', '', ''],
+            ['', 9, 8, '', '', '', '', 6, ''],
+            [8, '', '', '', 6, '', '', '', 3],
+            [4, '', '', 8, '', 3, '', '', 1],
+            [7, '', '', '', 2, '', '', '', 6],
+            ['', 6, '', '', '', '', 2, 8, ''],
+            ['', '', '', 4, 1, 9, '', '', 5],
+            ['', '', '', '', 8, '', '', 7, 9]
+        ]
+
+grille = [
+            [5, 3,'' , '', 7, '', '', '', ''],
+            [6, '', '', 1, 9, 5, '', '', ''],
+            ['', 9, 8, '', '', '', '', 6, ''],
+            [8, '', '', '', 6, '', '', '', 3],
+            [4, '', '', 8, '', 3, '', '', 1],
+            [7, '', '', '', 2, '', '', '', 6],
+            ['', 6, '', '', '', '', 2, 8, ''],
+            ['', '', '', 4, 1, 9, '', '', 5],
+            ['', '', '', '', 8, '', '', 7, 9]
+        ]
+
+grille_resolue= [[5, 3, 4, 6, 7, 8, 9, 1, 2],
+                [6, 7, 2, 1, 9, 5, 3, 4, 8],
+                [1, 9, 8, 3, 4, 2, 5, 6, 7],
+                [8, 5, 9, 7, 6, 1, 4, 2, 3],
+                [4, 2, 6, 8, 5, 3, 7, 9, 1],
+                [7, 1, 3, 9, 2, 4, 8, 5, 6],
+                [9, 6, 1, 5, 3, 7, 2, 8, 4],
+                [2, 8, 7, 4, 1, 9, 6, 3, 5],
+                [3, 4, 5, 2, 8, 6, 1, 7, 9]]
+
+#Ici, nous définissons les programmes permettant de vérifier si le Sudoku est juste et complété
+def verif_ligne():
+    for i in range(0,9):
+        if(set(L) != set(grille[i])):
+            print("Au moins une ligne présente une erreur")
+            return False
+    return True
+
+
+def verif_colonne():
+    for d in range(0,3):
+        COL = [grille[0][d],grille[1][d],grille[2][d],grille[3][d],grille[4][d],grille[5][d],grille[6][d],grille[7][d],grille[8][d]]
+        if(set(COL)) != set(L):
+            print("Au moins une colonne présente une erreur")
+            return False
+    return True
+
+def est_complete():
+    for i in range(9):
+        for e in range(9):
+            if grille[i][e] == '' :
+                print("la grille n'est pas complete")
+                return False
+    print ("la grille est complete")
+    return True
+
+def win():
+    if verif_ligne()==True:
+        if verif_colonne()==True:
+            font = pygame.font.SysFont(None, 36)
+            text = font.render('Le Sudoku est juste et complété', True, GREY)
+            WindowSurface.blit(text, (290, 290))
+#Ci-dessus le programme indiquant que le sudoku a bien été résolu:
+
+
+#Ici, Nous créons la grille du Sudoku.
+def quadrillage():
+    WindowSurface.fill(WHITE)
+    pygame.draw.line(WindowSurface, GREY , (60,120), (780,120), 1) #2 x
+    pygame.draw.line(WindowSurface, GREY , (60,180), (780,180), 1) #3 x
+    pygame.draw.line(WindowSurface, GREY , (60,300), (780,300), 1) #5 x
+    pygame.draw.line(WindowSurface, GREY , (60,360), (780,360), 1) #6 x
+    pygame.draw.line(WindowSurface, GREY , (60,480), (780,480), 1) #8 x
+    pygame.draw.line(WindowSurface, GREY , (60,540), (780,540), 1) #9 x
+    pygame.draw.line(WindowSurface, GREY , (60+80,600), (140,60), 1)#2 y
+    pygame.draw.line(WindowSurface, GREY , (60+80+80,600), (220,60), 1)#3 y
+    pygame.draw.line(WindowSurface, GREY , (60+(80*4),600), (380,60), 1)#5 y
+    pygame.draw.line(WindowSurface, GREY , (60+(80*5),600), (460,60), 1)#6 y
+    pygame.draw.line(WindowSurface, GREY , (60+(80*7),600), (620,60), 1)#8 y
+    pygame.draw.line(WindowSurface, GREY , (60+(80*8),600), (700,60), 1)#9 y
+    pygame.draw.line(WindowSurface, BLACK , (60,60), (780,60), 4) #1 x
+    pygame.draw.line(WindowSurface, BLACK , (60+(80*9),600), (780,60), 4)#10 y
+    pygame.draw.line(WindowSurface, BLACK , (60+(80*6),600), (540,60), 4)#7 y
+    pygame.draw.line(WindowSurface, BLACK, (60+(80*3),600), (300,60), 4)#4 y
+    pygame.draw.line(WindowSurface, BLACK , (60,600), (60,60), 4) #1 y
+    pygame.draw.line(WindowSurface, BLACK , (60,240), (780,240), 4) #4 x
+    pygame.draw.line(WindowSurface, BLACK , (60,600), (780,600), 4) #10 x
+    pygame.draw.line(WindowSurface, BLACK , (60,420), (780,420), 4) #7 x
+    WindowSurface.blit(image, (378, 10))
+    affiche_nombre()
+
+pygame.display.update()
+
+
+#Ci-dessous, la fonction permettant d'afficher les chiffres de bases du Sudoku via la grille initiale.
+def affiche_nombre():
+    for i in range(0,len(grille[0])):
+        if grille[0][i]==grille_init[0][i]:
+            text = font.render(str(grille[0][i]), True, BLACK)
+            textRect = text.get_rect()
+            textRect.center = (100+i*lx//9,97)
+            WindowSurface.blit(text, textRect)
+        else:
+            text = font.render(str(grille[0][i]), True, RED)
+            textRect = text.get_rect()
+            textRect.center = (100+i*lx//9,97)
+            WindowSurface.blit(text, textRect)
+
+    for i in range(0,len(grille[0])):
+        if grille[1][i]==grille_init[1][i]:
+            text = font.render(str(grille[1][i]), True, BLACK)
+            textRect = text.get_rect()
+            textRect.center = (100+i*lx//9,97+55)
+            WindowSurface.blit(text, textRect)
+        else:
+            text = font.render(str(grille[1][i]), True, RED)
+            textRect = text.get_rect()
+            textRect.center = (100+i*lx//9,97+55)
+            WindowSurface.blit(text, textRect)
+
+    for i in range(0,len(grille[0])):
+        if grille[2][i]==grille_init[2][i]:
+            text = font.render(str(grille[2][i]), True, BLACK)
+            textRect = text.get_rect()
+            textRect.center = (100+i*lx//9,97+57*2)
+            WindowSurface.blit(text, textRect)
+        else:
+            text = font.render(str(grille[2][i]), True, RED)
+            textRect = text.get_rect()
+            textRect.center = (100+i*lx//9,97+57*2)
+            WindowSurface.blit(text, textRect)
+
+    for i in range(0,len(grille[0])):
+        if grille[3][i]==grille_init[3][i]:
+            text = font.render(str(grille[3][i]), True, BLACK)
+            textRect = text.get_rect()
+            textRect.center = (100+i*lx//9,97+59*3)
+            WindowSurface.blit(text, textRect)
+        else:
+            text = font.render(str(grille[3][i]), True, RED)
+        textRect = text.get_rect()
+        textRect.center = (100+i*lx//9,97+59*3)
+        WindowSurface.blit(text, textRect)
+
+    for i in range(0,len(grille[0])):
+        if grille[4][i]==grille_init[4][i]:
+            text = font.render(str(grille[4][i]), True, BLACK)
+            textRect = text.get_rect()
+            textRect.center = (100+i*lx//9,97+59*4)
+            WindowSurface.blit(text, textRect)
+        else:
+             text = font.render(str(grille[4][i]), True, RED)
+             textRect = text.get_rect()
+             textRect.center = (100+i*lx//9,97+59*4)
+             WindowSurface.blit(text, textRect)
+
+    for i in range(0,len(grille[0])):
+        if grille[5][i]==grille_init[5][i]:
+            text = font.render(str(grille[5][i]), True, BLACK)
+            textRect = text.get_rect()
+            textRect.center = (100+i*lx//9,97+58.5*5)
+            WindowSurface.blit(text, textRect)
+        else:
+            text = font.render(str(grille[5][i]), True, RED)
+            textRect = text.get_rect()
+            textRect.center = (100+i*lx//9,97+58.5*5)
+            WindowSurface.blit(text, textRect)
+
+    for i in range(0,len(grille[0])):
+        if grille[6][i]==grille_init[6][i]:
+            text = font.render(str(grille[6][i]), True, BLACK)
+            textRect = text.get_rect()
+            textRect.center = (100+i*lx//9,97+59.5*6)
+            WindowSurface.blit(text, textRect)
+        else:
+            text = font.render(str(grille[6][i]), True,RED)
+            textRect = text.get_rect()
+            textRect.center = (100+i*lx//9,97+59.5*6)
+            WindowSurface.blit(text, textRect)
+
+    for i in range(0,len(grille[0])):
+        if grille[7][i]==grille_init[7][i]:
+            text = font.render(str(grille[7][i]), True, BLACK)
+            textRect = text.get_rect()
+            textRect.center = (100+i*lx//9,97+59.5*7)
+            WindowSurface.blit(text, textRect)
+        else:
+            text = font.render(str(grille[7][i]), True, RED)
+            textRect = text.get_rect()
+            textRect.center = (100+i*lx//9,97+59.5*7)
+            WindowSurface.blit(text, textRect)
+
+    for i in range(0,len(grille[0])):
+        if grille[8][i]==grille_init[8][i]:
+             text = font.render(str(grille[8][i]), True, BLACK)
+             textRect = text.get_rect()
+             textRect.center = (100+i*lx//9,97+59.5*8)
+             WindowSurface.blit(text, textRect)
+        else:
+            text = font.render(str(grille[8][i]), True, RED)
+            textRect = text.get_rect()
+            textRect.center = (100+i*lx//9,97+59.5*8)
+            WindowSurface.blit(text, textRect)
+    pygame.display.update()
+
+
+
+#Nous définissons ici la police d'écriture des chiffres du Sudoku.
+
+pygame .init ()
+WindowSurface = pygame.display.set_mode((longueur, largeur))
+pygame.display.set_caption('Sudoku')
+font = pygame.font.Font('freesansbold.ttf', 32)
+
+
+quadrillage()
+
+
+
+#Ci-dessous, la fonction permettant d'insérer des chiffres directement depuis le clavier.
+continuer = True
+while continuer:
+    for event in pygame.event.get():
+        if event.type == MOUSEBUTTONDOWN and event.button==1:
+            position_souris = pygame.mouse.get_pos()
+            colonne = (position_souris [0] // 80)
+            ligne = (position_souris [1] // 60)
+            colonne = colonne-1
+            ligne = ligne-1
+            print('colonne',colonne ,'ligne' ,ligne)
+        if event.type == KEYDOWN:
+            if grille_init[ligne][colonne]=='':
+                if event.key== pygame.K_9:
+                    num=9
+                    grille[ligne][colonne]=int(num)
+                elif event.key==pygame.K_8:
+                    num=8
+                    grille[ligne][colonne]=int(num)
+                elif event.key== pygame.K_7:
+                    num=7
+                    grille[ligne][colonne]=int(num)
+                elif event.key==pygame.K_6:
+                    num=6
+                    grille[ligne][colonne]=int(num)
+                elif event.key==pygame.K_5:
+                    num=5
+                    grille[ligne][colonne]=int(num)
+                elif event.key==pygame.K_4:
+                    num=4
+                    grille[ligne][colonne]=int(num)
+                elif event.key==pygame.K_3:
+                    num=3
+                    grille[ligne][colonne]=int(num)
+                elif event.key==pygame.K_2:
+                    num=2
+                    grille[ligne][colonne]=int(num)
+                elif event.key==pygame.K_1:
+                    num=1
+                    grille[ligne][colonne]=int(num)
+            else:
+                grille[ligne][colonne]=grille_init[ligne][colonne]
+
+            quadrillage()
+            pygame.display.update()
+            print(grille)
+            verif_colonne()
+            verif_ligne()
+            est_complete()
+            win()
+            pygame.display.update()
+#Ici, nous éxecutons les fonctions.
+        if event.type == pygame.QUIT:
+            continuer = False
+
+pygame.quit()
+
+#Le Sudoku est terminé.

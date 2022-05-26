@@ -2,7 +2,7 @@
 import pygame
 from pygame.locals import *
 
-image = pygame.image.load(r"C:\Users\apujolb\Downloads\sudoku\sudoku.PNG")
+image = pygame.image.load(r"C:\Users\'''Utilisateur'''\Downloads\sudoku\sudoku.PNG")
 #insérer ici l'emplacement de l'image en pièce jointe du mail.
 longueur = 850
 largeur = 660
